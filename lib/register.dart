@@ -1,4 +1,7 @@
+import 'package:auth_firebase/auth_service.dart';
+import 'package:auth_firebase/home.dart';
 import 'package:auth_firebase/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -7,8 +10,38 @@ class RegisterPage extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  final _service = AuthService();
+
   @override
   Widget build(BuildContext context) {
+     void register() async {
+      String email = _emailController.text;
+      String password = _passwordController.text;
+
+      User? user =
+          await _service.registerWithEmailPassword(email, password, context);
+      if (user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Register berhasil'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Register gagal'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
     return Scaffold(
       body: Center(
         child: ListView(
@@ -56,7 +89,9 @@ class RegisterPage extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                register();
+              },
               child:const Text(
                 'Daftar',
                 style: TextStyle(
